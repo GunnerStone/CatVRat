@@ -1,4 +1,4 @@
-package com.catvrat.CatVRatPlugin;
+package com.catvrat;
 
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;

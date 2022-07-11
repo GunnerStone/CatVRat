@@ -22,37 +22,60 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.catvrat.CatVRatPlugin;
+package com.catvrat;
 
-import lombok.Getter;
-import net.runelite.client.plugins.Plugin;
-import net.runelite.client.ui.overlay.infobox.Counter;
-import net.runelite.client.util.QuantityFormatter;
+import net.runelite.api.Client;
+import net.runelite.api.ItemID;
+import net.runelite.api.coords.LocalPoint;
+//import net.runelite.client.plugins.catvrat.*;
+import net.runelite.client.ui.overlay.Overlay;
+import net.runelite.client.ui.overlay.OverlayLayer;
+import net.runelite.client.ui.overlay.OverlayPosition;
+import net.runelite.client.ui.overlay.OverlayUtil;
+import net.runelite.client.game.ItemManager;
 
-import java.awt.image.BufferedImage;
+import javax.inject.Inject;
+import java.awt.*;
 
-class KarambwanjiCounter extends Counter
+class CatOverlay extends Overlay
 {
-	@Getter
-	private final int itemID;
-	private final String name;
+	private final CatVRatPlugin plugin;
+	private final Client client;
 
-	KarambwanjiCounter(Plugin plugin, int itemID, int count, String name, BufferedImage image)
+
+	@Inject
+	private ItemManager itemManager;
+
+	@Inject
+	private CatOverlay(Client client, CatVRatPlugin plugin)
 	{
-		super(image, plugin, count);
-		this.itemID = itemID;
-		this.name = name;
+		setPosition(OverlayPosition.DYNAMIC);
+		setLayer(OverlayLayer.ABOVE_SCENE);
+		this.client = client;
+		this.plugin = plugin;
 	}
 
 	@Override
-	public String getText()
+	public Dimension render(Graphics2D graphics)
 	{
-		return QuantityFormatter.quantityToRSDecimalStack(getCount());
+		if (CatVRatPlugin.catState.equalsIgnoreCase("warning")) {
+			makeFeedingOverlayHint(graphics, Color.ORANGE);
+		}
+		else if (CatVRatPlugin.catState.equalsIgnoreCase("dangerous")) {
+			makeFeedingOverlayHint(graphics, Color.RED);
+		}
+
+		return null;
 	}
 
-	@Override
-	public String getTooltip()
+	public void makeFeedingOverlayHint(Graphics2D graphics, Color color)
 	{
-		return name;
+		LocalPoint localLocation = client.getFollower().getLocalLocation();
+
+		if (localLocation != null)
+		{
+			OverlayUtil.renderActorOverlayImage(graphics, client.getFollower(), itemManager.getImage(ItemID.RAW_KARAMBWANJI, 1, false), color, 0);
+		}
+
 	}
 }
