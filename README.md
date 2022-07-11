@@ -52,5 +52,5 @@ Want to contribute? Great!
 Email [Gunner](https://github.com/GunnerStone) for collaborator access or fork and make your own version!
 ## License
 
-MIT
+BSD 2-Clause "Simplified" License 
 
